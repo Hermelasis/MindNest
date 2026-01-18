@@ -14,6 +14,8 @@ class _EditProfileState extends State<EditProfile> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmController = TextEditingController();
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
 
   @override
   void initState() {
@@ -143,7 +145,7 @@ class _EditProfileState extends State<EditProfile> {
                           const SizedBox(height: 6),
                           TextFormField(
                             controller: _passwordController,
-                            obscureText: true,
+                            obscureText: _obscurePassword,
                             decoration: InputDecoration(
                               hintText: 'Value',
                               contentPadding: const EdgeInsets.symmetric(
@@ -152,6 +154,17 @@ class _EditProfileState extends State<EditProfile> {
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
+                              ),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                                  color: Colors.grey,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscurePassword = !_obscurePassword;
+                                  });
+                                },
                               ),
                             ),
                           ),
@@ -167,7 +180,7 @@ class _EditProfileState extends State<EditProfile> {
                           const SizedBox(height: 6),
                           TextFormField(
                             controller: _confirmController,
-                            obscureText: true,
+                            obscureText: _obscureConfirmPassword,
                             decoration: InputDecoration(
                               hintText: 'Value',
                               contentPadding: const EdgeInsets.symmetric(
@@ -176,6 +189,17 @@ class _EditProfileState extends State<EditProfile> {
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
+                              ),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
+                                  color: Colors.grey,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscureConfirmPassword = !_obscureConfirmPassword;
+                                  });
+                                },
                               ),
                             ),
                           ),

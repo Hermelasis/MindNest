@@ -49,6 +49,9 @@ class LocalAuthService {
 
   static Future<void> signOut() async {
     final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_kUserName);
+    await prefs.remove(_kEmail);
+    await prefs.remove(_kPassword);
     await prefs.setBool(_kSignedIn, false);
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../services/local_auth.dart';
 import '../../services/notification_service.dart';
 import '../../services/theme_service.dart';
+import '../../services/auth_service.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -36,7 +37,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> _handleSignOut() async {
-    await LocalAuthService.signOut();
+    await AuthService().logout();
     if (mounted) {
       Navigator.of(context).pushNamedAndRemoveUntil('/sign_in', (route) => false);
     }

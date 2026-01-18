@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'local_auth.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -101,7 +102,17 @@ class AuthService {
     try {
       await Future.delayed(const Duration(milliseconds: 500)); // Brief wait for auth propagation
       await _firestore.enableNetwork();
-      await _runResiliently(() => _initializeUserInFirestore(user));
+      final doc = await _runResiliently(() => _initializeUserInFirestore(user));
+      
+      // Update local cache with latest Firestore data
+      if (doc != null && doc.exists) {
+        final data = doc.data() as Map<String, dynamic>;
+        await LocalAuthService.updateUser(
+          username: data['displayName'] ?? data['username'],
+          email: data['email'],
+        );
+      }
+      
       print("AuthService: Background Firestore initialization COMPLETED for ${user.uid}");
     } catch (e) {
       print("AuthService: Background Firestore initialization failed (user still signed in): $e");
@@ -137,8 +148,8 @@ class AuthService {
   }
 
   // Initialize user document in Firestore if it doesn't exist
-  Future<void> _initializeUserInFirestore(User? user) async {
-    if (user == null) return;
+  Future<DocumentSnapshot?> _initializeUserInFirestore(User? user) async {
+    if (user == null) return null;
     
     final userDoc = _firestore.collection('users').doc(user.uid);
     
@@ -154,17 +165,22 @@ class AuthService {
         'createdAt': FieldValue.serverTimestamp(),
         'lastLogin': FieldValue.serverTimestamp(),
       });
+      return await userDoc.get(); // Refresh to get the created doc
     } else {
       await userDoc.update({
         'lastLogin': FieldValue.serverTimestamp(),
       });
+      return docSnapshot;
     }
   }
 
   // Logout
   Future<void> logout() async {
-    await _googleSignIn.signOut();
+    try {
+      await _googleSignIn.signOut();
+    } catch (_) {}
     await _auth.signOut();
+    await LocalAuthService.signOut();
   }
 
   // Password Reset
