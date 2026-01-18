@@ -358,27 +358,28 @@ class _HomeDashbourdState extends State<HomeDashbourd> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  _getGreeting(),
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.w500,
-                    fontFamily: 'Serif',
-                    color: isDark
-                        ? const Color(0xFF81C784)
-                        : Colors.black, // Soft green in dark mode
-                    letterSpacing: 0.5,
+                Expanded(
+                  child: Text(
+                    _getGreeting(),
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'Serif',
+                      color: isDark
+                          ? const Color(0xFF81C784)
+                          : Colors.black, // Soft green in dark mode
+                      letterSpacing: 0.5,
+                    ),
                   ),
                 ),
                 IconButton(
                   onPressed: () => Navigator.of(context).pushNamed('/settings'),
                   icon: Icon(
                     Icons.settings,
-                    size: 36,
-                    color: onSurface.withOpacity(0.8),
+                    size: 30,
+                    color: isDark ? Colors.white70 : Colors.black87,
                   ),
                   padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
                 ),
               ],
             ),
